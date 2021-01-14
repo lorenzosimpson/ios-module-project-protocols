@@ -2,6 +2,148 @@ import Foundation
 
 //: ## Step 1
 //: Create an enumeration for the value of a playing card. The values are: `ace`, `two`, `three`, `four`, `five`, `six`, `seven`, `eight`, `nine`, `ten`, `jack`, `queen`, and `king`. Set the raw type of the enum to `Int` and assign the ace a value of `1`.
+enum Rank: Int {
+    case ace = 1
+    case two
+    case three
+    case four
+    case five
+    case six
+    case seven
+    case eight
+    case nine
+    case ten
+    case jack
+    case queen
+    case king
+    
+    static var allRanks: [Rank]  = [.ace, .two, .three, .four, .five, .six, .seven, .eight, .nine, .ten, .jack, .queen, .king]
+}
+
+extension Rank: CustomStringConvertible, Comparable {
+    static func < (lhs: Rank, rhs: Rank) -> Bool {
+        if lhs.rawValue < rhs.rawValue { return true }
+        else { return false }
+    }
+    
+    static func == (lhs: Rank, rhs: Rank) -> Bool {
+        if lhs.rawValue == rhs.rawValue { return true }
+        else { return false }
+    }
+    
+    var description: String {
+        switch self {
+        case .two:
+            return "2"
+        case .three:
+            return "3"
+        case .four:
+            return "4"
+        case .five:
+            return "5"
+        case .six:
+            return "6"
+        case .seven:
+            return "7"
+        case .eight:
+            return "8"
+        case .nine:
+            return "9"
+        case .ten:
+            return "10"
+        case .jack:
+            return "jack"
+        case .queen:
+            return "queen"
+        case .king:
+            return "king"
+        default:
+            return String(self.rawValue)
+        }
+    }
+}
+
+enum CardSuit: String {
+    case hearts, diamonds, spades, clubs
+    
+    static var allSuits: [CardSuit] = [.hearts, .diamonds, .spades, .clubs]
+}
+
+struct Card {
+    let suit: CardSuit
+    let rank: Rank
+}
+
+extension Card: CustomStringConvertible {
+    var description: String {
+        return "\(self.rank) of \(suit.rawValue)"
+    }
+    
+    static func < (lhs: Card, rhs: Card) -> Bool {
+        if lhs.rank.rawValue == rhs.rank.rawValue { return true }
+        else { return false }
+    }
+    
+    
+    static func == (lhs: Card, rhs: Card) -> Bool {
+        if lhs.rank.rawValue == rhs.rank.rawValue && lhs.suit.rawValue == rhs.suit.rawValue { return true }
+        else { return false }
+    }
+    
+}
+
+struct Deck {
+    let cards: [Card]
+    init() {
+        var deck: [Card] = []
+        for rank in Rank.allRanks {
+            for suit in CardSuit.allSuits {
+                deck.append(Card(suit: suit, rank: rank))
+            }
+        }
+        self.cards = deck
+    }
+    
+    func drawCard() -> Card {
+        return self.cards[Int.random(in: 0...cards.count - 1)]
+    }
+}
+
+
+protocol CardGame {
+    var deck: Deck { get }
+    func play()
+}
+
+class HighLow: CardGame {
+    var deck: Deck
+    
+    init(deck: Deck) {
+        self.deck = deck
+    }
+    
+    func play() {
+        var player1Card = deck.drawCard()
+        var player2Card = deck.drawCard()
+        
+        if player1Card == player2Card {
+            print("Tie: \(player1Card.description), \(player2Card.description)")
+        }
+        else if player1Card < player2Card {
+            print("Player one has higher card with \(player1Card.description) vs \(player2Card.description)")
+        }
+        else {
+            print("Player two has higher card with \(player2Card.description) vs \(player1Card.description)")
+        }
+    }
+}
+var highLowDeck = Deck()
+var highLow = HighLow(deck: highLowDeck)
+highLow.play()
+
+
+
+
 
 
 
